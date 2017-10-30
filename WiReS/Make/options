@@ -1,0 +1,27 @@
+c++WARN  += -Wall -Wno-unused-parameter -Wno-overloaded-virtual -Wno-missing-field-initializers -Wno-missing-braces
+c++FLAGS += -g -Wno-unused-local-typedefs
+
+EXE_INC = \
+    -I$(LIB_SRC)/triSurface/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude\
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude  \
+    -I$(LIB_SRC)/fvMotionSolver/lnInclude\
+    -I$(LIB_SRC)/postProcessing/functionObjects/forces/lnInclude \
+    -I$(LIB_SRC)/fvMotionSolver/lnInclude \
+    -I/home/carmine/Downloads/GeographicLib-1.46/install/include
+    
+
+EXE_LIBS = \
+    -ltriSurface \
+    -lmeshTools\
+    -ldynamicFvMesh \
+    -ldynamicMesh \
+    -lfvMotionSolvers\
+    -lfiniteVolume \
+    -lboost_system \
+    -L /home/carmine/Downloads/GeographicLib-1.46/build/src/ -lGeographic
+
+   
+

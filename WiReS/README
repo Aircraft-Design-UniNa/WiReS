@@ -1,0 +1,38 @@
+Programming
+=====================
+
+WiReS folder
+---------------------
+Source code folder must be in OpenFOAM/user-2.3.1/ at the same level of the $FOAM_RUN directory.
+Example: /home/OpenFOAM/user-2.3.1/WiReS/
+Source files can have whatever kind of .cpp extension. OpenFOAM files have .C and .H extensions.
+
+WiReS/Make
+---------------------
+Contains configuration for building with wmake (OpenFOAM's own compilation script based on make)
+Object files are generated in a subdirectory
+Executable files are generated in OpenFOAM/user-2.3.1/platforms/linux64GccDPOpt/bin/
+
+Linking GeographicLib libraries
+-----------------------------------
+Add following line to ~/.bashrc file
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user/Downloads/GeographicLib-1.46/build/src
+
+
+Executing
+=====================
+
+In order for the server to access data from an OpenFOAM case
+
+1. cd OpenFOAM/user-2.3.1/run/test_case
+   This folder now contains all simulation files
+
+2. source /opt/openfoam231/etc/bashrc
+
+  Sources OpenFOAM version
+  (also by aliasing the command in ~/.bashrc:
+	alias OF231="source /opt/openfoam231/etc/bashrc ")
+
+3. WiReS port_num
+   Runs server in test_case folder and on port = port_num
+   Default port_num is 1025, if nothing is specified

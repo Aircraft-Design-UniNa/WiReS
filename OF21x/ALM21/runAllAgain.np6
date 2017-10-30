@@ -1,0 +1,81 @@
+#!/bin/bash
+
+solver=pisoFoamTurbine
+np=6
+
+refineMeshLocal()
+{
+   i=$1
+   while [ $i -gt 0 ]
+   do
+      echo "Performing level $i local refinement"
+      echo "   selecting cells to refine..."
+      cp system/topoSetDict.local.$i system/topoSetDict
+      topoSet > log.topoSet.local.$i 2>&1
+
+      echo "   refining cells..."
+      cp system/refineMeshDict.local system/refineMeshDict
+      refineMesh -dict -overwrite > log.refineMesh.local.$i 2>&1
+
+      let i=i-1
+   done
+}
+
+refineMeshGlobal()
+{
+   i=1
+   while [ $i -le $1 ]
+   do
+      echo "Performing level $i global refinement"
+      echo "   refining cells..."
+      mpirun -np $np refineMesh -parallel -overwrite > log.refineMesh.global.$i 2>&1
+      # Note: refineMesh only reads the Dict if -dict option is present
+      let i=i+1
+   done
+}
+
+
+# --- START SCRIPT OPERATIONS
+
+echo -e "\nStarting OpenFOAM job at: " $(date)
+echo "Using " $np " processors"
+
+# Remove previous log files and processor folders
+rm log.*
+rm -rf processor*
+
+# Get a clean version of the initial fields
+rm -rf 0
+cp -rf 0.original 0
+
+# Copy the proper controlDict into place
+cp system/controlDict.1 system/controlDict
+
+# Make the background coarse mesh using blockMesh (serial)
+echo "Running blockMesh"
+cp constant/polyMesh/blockMeshDict ./
+rm -rf constant/polyMesh/*
+mv ./blockMeshDict constant/polyMesh
+blockMesh > log.blockMesh 2>&1
+
+# Perform local refinement (serial)
+refineMeshLocal 3
+
+# Decompose the mesh and solution files (serial)
+echo "Running decomposePar"
+cp system/decomposeParDict.$np system/decomposeParDict
+decomposePar -cellDist -force > log.decomposePar
+
+# Perform global refinement to desired resolution (parallel)
+refineMeshGlobal 1
+
+# Check the mesh.
+echo "Running checkMesh"
+mpirun -np $np checkMesh -parallel > log.checkMesh 2>&1
+
+# Run the solver (parallel)
+echo "Running solver: pisoFoamTurbine"
+mpirun -np $np $solver -parallel > log.$solver 2>&1
+echo "Ending OpenFOAM job at: " $(date)
+
+# --- EOF

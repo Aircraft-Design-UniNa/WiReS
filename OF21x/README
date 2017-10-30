@@ -1,0 +1,6 @@
+ALM = Actuator Line Model
+
+ALM_11: V = 5 m/s towards east, in-axis, Turbine Az = 270
+ALM_12: V = 12 m/s towards east, out-of-axis, Turbine Az = 270
+ALM_21: V = 5 m/s towards east, in-axis, Turbine Az = 285
+ALM_22: V = 12 m/s towards east, out-of-axis, Turbine Az = 285
